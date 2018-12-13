@@ -7,7 +7,7 @@ Map press callback -
   1) Draggable marker
   2) WebView(?)
 OnMyWay button - when it's clicked show a snackbar with undo
-OnMyWay functionality - location change listener and sending sms when got to said location
+OnMyWay functionality - location change listener 
 Update location for a contact already picked
 Delete location already picked
 Add animation on open/close searh bar

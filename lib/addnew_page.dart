@@ -1,7 +1,9 @@
-import 'dart:async';
+import 'location_picker.dart';
+import 'globals.dart' as globals;
 import 'package:flutter/material.dart';
 import 'package:contacts_service/contacts_service.dart';
-import 'location_picker.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+
 
 class AddNewPage extends StatefulWidget {
   AddNewPageState createState() => new AddNewPageState();
@@ -26,7 +28,11 @@ class AddNewPageState extends State<AddNewPage> {
       } else {
         setState(() {
           _searchText = _filter.text;
-          _filteredContacts = _contacts.where((c) => c.displayName.toLowerCase().contains(_searchText.toLowerCase())).toList();
+          _filteredContacts = _contacts
+              .where((c) => c.displayName
+                  .toLowerCase()
+                  .contains(_searchText.toLowerCase()))
+              .toList();
         });
       }
     });
@@ -45,9 +51,7 @@ class AddNewPageState extends State<AddNewPage> {
         this._appBarTitle = new TextField(
           controller: _filter,
           decoration: new InputDecoration(
-              prefixIcon: new Icon(Icons.search),
-              hintText: 'Search...'
-          ),
+              prefixIcon: new Icon(Icons.search), hintText: 'Search...'),
         );
       } else {
         this._searchIcon = new Icon(Icons.search);
@@ -68,14 +72,15 @@ class AddNewPageState extends State<AddNewPage> {
 
   contactSelected(Contact c) async {
     final locationPicked = await pickLocation();
-    Navigator.pop(context, {'contact': c, 'location': locationPicked });
+    
+    globals.SavedContact retContact = new globals.SavedContact(c.displayName, c.phones.first);
+    retContact.setLocation(LatLng(locationPicked["latitude"], locationPicked["longitude"]));
+    Navigator.pop(context, retContact);
   }
 
   pickLocation() async {
-    final _locationPicked = await
-    Navigator.of(context).push(MaterialPageRoute(
-        builder: (BuildContext context) =>
-            LocationPickerPage()));
+    final _locationPicked = await Navigator.of(context).push(MaterialPageRoute(
+        builder: (BuildContext context) => LocationPickerPage()));
 
     return _locationPicked;
   }
@@ -95,26 +100,23 @@ class AddNewPageState extends State<AddNewPage> {
       body: SafeArea(
         child: _filteredContacts != null
             ? ListView.builder(
-          itemCount: _filteredContacts?.length ?? 0,
-          itemBuilder: (BuildContext context, int index) {
-            Contact c = _filteredContacts?.elementAt(index);
-            return ListTile(
-              onTap: () {
-                contactSelected(c);
-              },
-              leading: ((c.avatar != null && c.avatar.length > 0)
-                  ? CircleAvatar(backgroundImage: MemoryImage(c.avatar))
-                  : CircleAvatar(
-                      backgroundColor: Colors.indigo,
-                      child: Text(c.displayName.length > 1
-                          ? c.displayName?.substring(0, 2)
-                          : "")
-                    )
-              ),
-              title: Text(c.displayName ?? ""),
-            );
-          },
-        ) : Center(child: CircularProgressIndicator()),
+                itemCount: _filteredContacts?.length ?? 0,
+                itemBuilder: (BuildContext context, int index) {
+                  Contact c = _filteredContacts?.elementAt(index);
+                  return ListTile(
+                    onTap: () {
+                      contactSelected(c);
+                    },
+                    leading: CircleAvatar(
+                        backgroundColor: Colors.indigo,
+                        child: Text(c.displayName.length > 1
+                            ? c.displayName?.substring(0, 2)
+                            : "")),
+                    title: Text(c.displayName ?? ""),
+                  );
+                },
+              )
+            : Center(child: CircularProgressIndicator()),
       ),
     );
   }

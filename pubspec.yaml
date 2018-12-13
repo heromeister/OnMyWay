@@ -21,6 +21,9 @@ dependencies:
   contacts_service: ^0.0.9
   #simple_permissions: ^0.1.9
   google_maps_flutter: ^0.0.3
+  path_provider: ^0.4.1
+  shared_preferences: ^0.4.3
+  sqflite: any
 
 
   # The following adds the Cupertino Icons font to your application.

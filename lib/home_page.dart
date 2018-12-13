@@ -1,6 +1,9 @@
+import 'data_access.dart';
+import 'addnew_page.dart';
+import 'globals.dart' as globals;
 import 'package:flutter/material.dart';
 import 'package:contacts_service/contacts_service.dart';
-import 'addnew_page.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -8,33 +11,51 @@ class HomePage extends StatefulWidget {
 }
 
 class HomePageState extends State<HomePage> {
-  Iterable<Contact> _contactsSaved;
+  List<globals.SavedContact> _contactsSaved;
+  DataAccess _dataAccess;
 
   @override
   initState() {
     super.initState();
-    readSavedContactsFromFile();
+    _dataAccess = new DataAccess();
+    getSavedContacts();
   }
 
-  readSavedContactsFromFile() {
+  getSavedContacts() {
+    List<Map> contacts = _dataAccess.getContacts();
+    _contactsSaved = parseContactsList(contacts);
+  }
 
+  parseContactsList(List<Map> contacts) {
+    for (var contact in contacts) {
+      globals.SavedContact savedContact =
+        globals.SavedContact(contact["displayName"],
+            contact["phoneNumber"],
+            contact["latitude"],
+            contact["longitde"]);
+
+      _contactsSaved.add(savedContact);
+    }
+  }
+
+  saveContact(globals.SavedContact newContact) {
+    _dataAccess.insertContact(newContact);
   }
 
   selectCallback() async {
-    final data = await Navigator.push(context, MaterialPageRoute(builder: (context) => AddNewPage()));
-    Contact selectedContact = data["contact"];
-    Map<String, double> selectedLocation = data["location"];
+    final data = await Navigator.push(
+        context, MaterialPageRoute(builder: (context) => AddNewPage()));
+    globals.SavedContact selectedContact = data["contact"];
 
-    print("contact: " + selectedContact.displayName);
-    print("location: " + selectedLocation.toString());
+    print(selectedContact.toString());
+
+    saveContact(selectedContact);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("On My Way")
-      ),
+      appBar: AppBar(title: Text("On My Way")),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         backgroundColor: Colors.indigo,
@@ -43,29 +64,23 @@ class HomePageState extends State<HomePage> {
       body: SafeArea(
         child: _contactsSaved != null
             ? ListView.builder(
-          itemCount: _contactsSaved?.length ?? 0,
-          itemBuilder: (BuildContext context, int index) {
-            Contact c = _contactsSaved?.elementAt(index);
-            return ListTile(
-              onTap: () {
-                // TODO update location of a contact already picked
-              },
-              leading: ((c.avatar != null && c.avatar.length > 0)
-                  ? CircleAvatar(backgroundImage: MemoryImage(c.avatar))
-                  : CircleAvatar(
-                  backgroundColor: Colors.indigo,
-                  child: Text(c.displayName.length > 1
-                      ? c.displayName?.substring(0, 2)
-                      : "")
+                itemCount: _contactsSaved?.length ?? 0,
+                itemBuilder: (BuildContext context, int index) {
+                  globals.SavedContact savedContact = _contactsSaved?.elementAt(index);
+                  return ListTile(
+                    onTap: () {
+                      // TODO update location of a contact already picked
+                    },
+                    leading: CircleAvatar(
+                        backgroundColor: Colors.indigo,
+                        child: Text(savedContact.Name().length > 1
+                            ? savedContact.Name()?.substring(0, 2)
+                            : "")),
+                    title: Text(savedContact.Name() ?? ""),
+                  );
+                },
               )
-              ),
-              title: Text(c.displayName ?? ""),
-            );
-          },
-        )
-        : Center(
-          child: Text("Click the button below to add new stuff")
-        ),
+            : Center(child: Text("Click the button below to add new stuff")),
       ),
     );
   }

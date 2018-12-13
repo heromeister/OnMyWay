@@ -1,0 +1,13 @@
+Save picked contact+location to json file 
+Read from saved file
+^^^^^^^^ different solution? ^^^^^^^^
+
+Get callback from map press
+OnMyWay button - when it's clicked show a snackbar with undo
+OnMyWay functionality - location change listener and sending sms when got to said location
+Update location for a contact already picked
+Delete location already picked
+Add animation on open/close searh bar
+
+---------------------------------------------------
+Groups

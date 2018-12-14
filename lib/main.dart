@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'home_page.dart';
+import 'onmyway_page.dart';
+import 'globals.dart' as globals;
 
 void main() => runApp(App());
 
@@ -11,7 +12,7 @@ class App extends StatelessWidget {
       theme: ThemeData(
         primaryColor: Colors.indigo
       ),
-      home: HomePage()
+      home: OnMyWayPage()
     );
   }
 }

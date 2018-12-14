@@ -1,5 +1,7 @@
+import 'globals.dart' as globals;
 import 'package:flutter/material.dart';
 import 'package:location/location.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 Marker _selectedMarker;
@@ -18,6 +20,7 @@ class LocationPickerPageState extends State<LocationPickerPage> {
           IconButton(
             icon: Icon(Icons.save),
             onPressed: () {
+              print("Location picked " + _selectedMarker.options.position.toString());
               Navigator.pop(context, _selectedMarker.options.position);
             },
           )
@@ -43,11 +46,13 @@ class LocationPickerState extends State<LocationPicker> {
   GoogleMapController controller;
   bool _mapCreated = false;
   Map<String, double> _userLocation;
+  bool _isFirstTimePickingLocation;
 
   @override
   initState() {
     super.initState();
     getCurrentLocation();
+    //pullPopupShouldDismiss();
   }
 
   getCurrentLocation() async {
@@ -65,8 +70,16 @@ class LocationPickerState extends State<LocationPicker> {
     });
   }
 
+  pullPopupShouldDismiss() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool isFirstTimePickingLocation = (prefs.getBool("isFirstTimePickingLocation") ?? true);
+    await prefs.setBool("isFirstTimePickingLocation", false);
+    _isFirstTimePickingLocation = isFirstTimePickingLocation;
+  }
+
   @override
   Widget build(BuildContext context) {
+    //if (_isFirstTimePickingLocation) showAlertDialog(context: context);
     return GoogleMap(
       onMapCreated: _onMapCreated,
       options: GoogleMapOptions(
@@ -78,7 +91,7 @@ class LocationPickerState extends State<LocationPicker> {
           mapType: MapType.normal,
           myLocationEnabled: true,
           compassEnabled: true),
-    ); //: Center(child: CircularProgressIndicator());
+    );
   }
 
   void _onMapCreated(GoogleMapController controller) {
@@ -121,5 +134,23 @@ class LocationPickerState extends State<LocationPicker> {
 
   void _updateSelectedMarker(MarkerOptions changes) {
     controller.updateMarker(_selectedMarker, changes);
+  }
+
+  void showAlertDialog<T>({ BuildContext context }) {
+    showDialog<T>(
+      context: context,
+      builder: (BuildContext context) =>
+        AlertDialog(
+          title: Text("Location Picker"),
+          content: Text("In order to pick a location, long press the marker and drag it around"),
+          actions: <Widget>[
+            FlatButton(
+              child: Text("Got It!"),
+              textColor: Theme.of(context).primaryColor,
+              onPressed: () {},
+            )
+          ],
+        )
+    );
   }
 }

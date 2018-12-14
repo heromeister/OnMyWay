@@ -71,10 +71,11 @@ class AddNewPageState extends State<AddNewPage> {
   }
 
   contactSelected(Contact c) async {
+    globals.SavedContact retContact = new globals.SavedContact(c.displayName, c.phones.first.value);
     final locationPicked = await pickLocation();
-    
-    globals.SavedContact retContact = new globals.SavedContact(c.displayName, c.phones.first);
-    retContact.setLocation(LatLng(locationPicked["latitude"], locationPicked["longitude"]));
+
+    retContact.setLocation(locationPicked);
+
     Navigator.pop(context, retContact);
   }
 
@@ -103,16 +104,22 @@ class AddNewPageState extends State<AddNewPage> {
                 itemCount: _filteredContacts?.length ?? 0,
                 itemBuilder: (BuildContext context, int index) {
                   Contact c = _filteredContacts?.elementAt(index);
-                  return ListTile(
-                    onTap: () {
-                      contactSelected(c);
-                    },
-                    leading: CircleAvatar(
-                        backgroundColor: Colors.indigo,
-                        child: Text(c.displayName.length > 1
-                            ? c.displayName?.substring(0, 2)
-                            : "")),
-                    title: Text(c.displayName ?? ""),
+                  return Container(
+                    child: ListTile(
+                      onTap: () async {
+                        print("Selected Contact: Name: " + c.displayName);
+                        print("Selected Contact: Phone: " + c.phones.first.toString());
+                        await contactSelected(c);
+                      },
+                      leading: CircleAvatar(
+                          backgroundColor: Theme.of(context).primaryColor,
+                          child: Text(c.displayName.length > 1
+                              ? c.displayName?.substring(0, 2)
+                              : "")),
+                      title: Text(c.displayName ?? ""),
+                    ),
+                    decoration: BoxDecoration(
+                        border: Border(bottom: BorderSide(color: Colors.black26))),
                   );
                 },
               )

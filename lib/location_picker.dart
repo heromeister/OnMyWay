@@ -7,6 +7,14 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 Marker _selectedMarker;
 
 class LocationPickerPage extends StatefulWidget {
+  final location;
+  //LocationPickerPage({this.location});
+
+  LocationPickerPage({Key key, this.location}) : super(key: key) {
+    print("Father widget's passed location");
+    print(this.location);
+  }
+
   LocationPickerPageState createState() => new LocationPickerPageState();
 }
 
@@ -30,7 +38,7 @@ class LocationPickerPageState extends State<LocationPickerPage> {
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           Expanded(
-            child: LocationPicker(),
+            child: LocationPicker(locationToDisplay: widget.location),
           ),
         ],
       ),
@@ -39,6 +47,9 @@ class LocationPickerPageState extends State<LocationPickerPage> {
 }
 
 class LocationPicker extends StatefulWidget {
+  final locationToDisplay;
+  LocationPicker({this.locationToDisplay});
+
   LocationPickerState createState() => new LocationPickerState();
 }
 
@@ -84,8 +95,9 @@ class LocationPickerState extends State<LocationPicker> {
       onMapCreated: _onMapCreated,
       options: GoogleMapOptions(
           cameraPosition: CameraPosition(
-            target:
-                LatLng(_userLocation["latitude"], _userLocation["longitude"]),
+            target: (widget.locationToDisplay != null)
+                ? widget.locationToDisplay
+                : LatLng(_userLocation["latitude"], _userLocation["longitude"]),
             zoom: 15.0,
           ),
           mapType: MapType.normal,
@@ -98,7 +110,14 @@ class LocationPickerState extends State<LocationPicker> {
     _mapCreated = true;
     this.controller = controller;
     controller.onMarkerTapped.add(_onMarkerTapped);
-    _addMarker(LatLng(_userLocation["latitude"], _userLocation["longitude"]));
+
+    print("Widget's passed locaiotn: ");
+    print(widget.locationToDisplay);
+    if (widget.locationToDisplay != null) {
+      _addMarker(LatLng(widget.locationToDisplay.latitude, widget.locationToDisplay.longitude));
+    } else {
+      _addMarker(LatLng(_userLocation["latitude"], _userLocation["longitude"]));
+    }
   }
 
   @override

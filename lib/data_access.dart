@@ -30,13 +30,12 @@ class DataAccess {
       }
     }
     var retDb = await openConnection(path);
-    //await db.rawDelete("DELETE FROM Contacts");
     return retDb;
   }
 
   openConnection(path) async {
     try {
-      var retDb = await openDatabase(path, version: 1, /*onCreate: _onCreate*/);
+      var retDb = await openDatabase(path, version: 1, onCreate: _onCreate);
       return retDb;
     } catch(e) {
       print(e);
@@ -44,15 +43,23 @@ class DataAccess {
   }
 
   _onCreate(Database db, int version) async {
-    // When creating the db, create the table
     await db.execute(
-        'CREATE TABLE $TABLE_NAME (id INTEGER PRIMARY KEY, displayName TEXT, phoneNumber TEXT, latitude REAL, longitude REAL)');
+        'CREATE TABLE $TABLE_NAME (id INTEGER PRIMARY KEY AUTOINCREMENT, '
+                                  'displayName TEXT NOT NULL, '
+                                  'phoneNumber TEXT NOT NULL, '
+                                  'latitude REAL NOT NULL,'
+                                  'longitude REAL  NOT NULL)');
     print("$TABLE_NAME table created");
+  }
+
+  clearTable(String tableName) async {
+    var dbClient = await database;
+    dbClient.delete(tableName);
   }
 
   Future<List<Map>> getContacts() async {
     var dbClient = await database;
-    List<Map> contacts = await dbClient.rawQuery('SELECT * FROM $TABLE_NAME');
+    List<Map> contacts = await dbClient.query(TABLE_NAME);
     return contacts;
   }
 
@@ -62,6 +69,18 @@ class DataAccess {
 
     var dbClient = await database;
     int id = await dbClient.insert(TABLE_NAME, contact.toMap());
+    print("Strong id: " + id.toString());
+
+    return id;
+  }
+
+  updateContact(globals.SavedContact contact) async {
+    print("SavedContact as map");
+    print(contact.toMap());
+
+    var dbClient = await database;
+    int id = await dbClient.update(TABLE_NAME, contact.toMap(),
+        where: 'id = ?', whereArgs: [contact.id]);
     print("Strong id: " + id.toString());
   }
 }

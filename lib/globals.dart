@@ -8,21 +8,27 @@ class SavedContact {
   String _phoneNumber;
   LatLng _location;
 
-  Name() => _displayName;
-  PhoneNumber() => _phoneNumber;
-  Location() => _location;
+  get id => _id;
+  get name => _displayName;
+  get phone => _phoneNumber;
+  get location => _location;
 
-  SavedContact(displayName, phoneNumber, [latitude=null, longitude=null]) {
+  setId(int i) => _id = i;
+  setName(String n) => _displayName = n;
+  setPhone(String p) => _phoneNumber = p;
+  setLocation(LatLng l) => _location = l;
+
+  SavedContact(displayName, phoneNumber, [id=null, latitude=null, longitude=null]) {
     _displayName = displayName;
     _phoneNumber = phoneNumber;
     if (latitude != null && longitude != null) {
       _location = LatLng(latitude, longitude);
     }
+    if (id != null) {
+      _id = id;
+    }
   }
 
-  setLocation(LatLng location) {
-    _location = location;
-  }
 
   fromMap(Map<String, dynamic> map) {
     _displayName = map["displayName"];
@@ -42,11 +48,13 @@ class SavedContact {
 
   @override
   String toString() {
-    String displayName = this.Name();
-    String phoneNumber = this.PhoneNumber();
-    double latitude = this.Location()?.latitude;
-    double longitude = this.Location()?.longitude;
+    String displayName = this.name;
+    String phoneNumber = this.phone;
+    double latitude = this.location?.latitude;
+    double longitude = this.location?.longitude;
+    int id = this.id;
 
+    print("globals.SavedContact: Id: $id");
     print("globals.SavedContact: DisplayName: $displayName");
     print("globals.SavedContact: PhoneNumber: $phoneNumber");
     print("globals.SavedContact: Latitude: $latitude");

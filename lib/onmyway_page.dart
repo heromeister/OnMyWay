@@ -1,8 +1,8 @@
 import 'data_access.dart';
 import 'addnew_page.dart';
+import 'location_picker.dart';
 import 'globals.dart' as globals;
 import 'package:flutter/material.dart';
-import 'package:contacts_service/contacts_service.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class OnMyWayPage extends StatefulWidget {
@@ -19,12 +19,12 @@ class OnMyWayPageState extends State<OnMyWayPage> {
     super.initState();
     _contactsSaved = new List();
     _dataAccess = new DataAccess();
+    _dataAccess.clearTable("Contacts");
     getSavedContacts();
   }
 
   getSavedContacts() async {
     List<Map> contacts = await _dataAccess.getContacts();
-    await new Future.delayed(const Duration(seconds: 2));
     setState(() {
       _contactsSaved = parseContactsList(contacts);
     });
@@ -36,8 +36,13 @@ class OnMyWayPageState extends State<OnMyWayPage> {
       globals.SavedContact savedContact =
       globals.SavedContact(contact["displayName"],
           contact["phoneNumber"],
+          contact["id"],
           contact["latitude"],
-          contact["longitde"]);
+          contact["longitude"]);
+
+      print("blaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+      print(contact['latitude']);
+      print(contact['longitude']);
       print("yo yo bitch");
       print(contact);
       print(savedContact.toString());
@@ -47,20 +52,28 @@ class OnMyWayPageState extends State<OnMyWayPage> {
     return retContacts;
   }
 
-  saveContact(globals.SavedContact newContact) {
-    _dataAccess.insertContact(newContact);
-  }
-
-  selectCallback() async {
+  addContact() async {
     final data = await Navigator.push(
         context, MaterialPageRoute(builder: (context) => AddNewPage()));
     globals.SavedContact selectedContact = data;
 
-    print("Check this shit outttttt: " + selectedContact.toString());
+    selectedContact.setId(await _dataAccess.insertContact(selectedContact));
+    print("Contact saved. New id: " + selectedContact.id.toString());
 
-    saveContact(selectedContact);
+    await getSavedContacts();
+  }
 
-    getSavedContacts();
+  updateContact(globals.SavedContact contactToUpdate) async {
+    print("updateContact: Contact's location");
+    print(contactToUpdate.location);
+    print(contactToUpdate.toString());
+
+    final locationPicked = await Navigator.of(context).push(MaterialPageRoute(
+        builder: (BuildContext context) => LocationPickerPage(location: contactToUpdate.location)));
+
+    contactToUpdate.location(locationPicked);
+
+    await _dataAccess.updateContact(contactToUpdate);
   }
 
   @override
@@ -70,7 +83,7 @@ class OnMyWayPageState extends State<OnMyWayPage> {
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         backgroundColor: Theme.of(context).primaryColor,
-        onPressed: selectCallback,
+        onPressed: addContact,
       ),
       body: SafeArea(
         child: _contactsSaved != null
@@ -81,14 +94,14 @@ class OnMyWayPageState extends State<OnMyWayPage> {
             return Container(
               child: ListTile(
                 onTap: () {
-                  // TODO update location of a contact already picked
+                  updateContact(savedContact);
                 },
                 leading: CircleAvatar(
                     backgroundColor: Theme.of(context).primaryColor,
-                    child: Text(savedContact.Name().length > 1
-                        ? savedContact.Name()?.substring(0, 2)
+                    child: Text(savedContact.name.length > 1
+                        ? savedContact.name?.substring(0, 2)
                         : "")),
-                title: Text(savedContact.Name() ?? ""),
+                title: Text(savedContact.name ?? ""),
               ),
               decoration: BoxDecoration(
                   border: Border(bottom: BorderSide(color: Colors.black26))),

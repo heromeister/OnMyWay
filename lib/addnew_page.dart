@@ -74,16 +74,17 @@ class AddNewPageState extends State<AddNewPage> {
     globals.SavedContact retContact = new globals.SavedContact(c.displayName, c.phones.first.value);
     final locationPicked = await pickLocation();
 
+    //retContact.location(locationPicked);
     retContact.setLocation(locationPicked);
 
     Navigator.pop(context, retContact);
   }
 
   pickLocation() async {
-    final _locationPicked = await Navigator.of(context).push(MaterialPageRoute(
+    final locationPicked = await Navigator.of(context).push(MaterialPageRoute(
         builder: (BuildContext context) => LocationPickerPage()));
 
-    return _locationPicked;
+    return locationPicked;
   }
 
   @override

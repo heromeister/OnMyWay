@@ -1,16 +1,13 @@
-Save picked contact+location to json file 
-Read from saved file
-^^^^^^^^ different solution? ^^^^^^^^
+Check different map plugin. Try cirrus_map_view.
+^if it doesnt work check if updating the marker(function) will get it to give it's actual location after drag
 
-Info saved for Contacts (displayName, phone, location)
-Map press callback -
-  1) Draggable marker
-  2) WebView(?)
 OnMyWay button - when it's clicked show a snackbar with undo
 OnMyWay functionality - location change listener 
-Update location for a contact already picked
-Delete location already picked
+Update location for a contact already picked - done. currently doesnt work because map plugin. make a button in appbar?
+Delete location already picked (appbar button?)
 Add animation on open/close searh bar
+Splash screen? 
+Make icon
 
 ---------------------------------------------------
 Groups

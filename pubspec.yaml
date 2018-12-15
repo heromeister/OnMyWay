@@ -24,6 +24,8 @@ dependencies:
   path_provider: ^0.4.1
   shared_preferences: ^0.4.3
   sqflite: any
+  #cirrus_map_view: ^0.0.16
+
 
 
   # The following adds the Cupertino Icons font to your application.

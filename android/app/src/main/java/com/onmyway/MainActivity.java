@@ -1,4 +1,4 @@
-package com.example.onmyway;
+package com.onmyway;
 
 import android.os.Bundle;
 import io.flutter.app.FlutterActivity;

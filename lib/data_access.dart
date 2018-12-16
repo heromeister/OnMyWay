@@ -58,12 +58,14 @@ class DataAccess {
   }
 
   Future<List<Map>> getContacts() async {
+    print("getContacts started");
     var dbClient = await database;
     List<Map> contacts = await dbClient.query(TABLE_NAME);
     return contacts;
   }
 
   insertContact(globals.SavedContact contact) async {
+    print("insertContact started");
     print("SavedContact as map");
     print(contact.toMap());
 
@@ -75,12 +77,14 @@ class DataAccess {
   }
 
   updateContact(globals.SavedContact contact) async {
-    print("SavedContact as map");
-    print(contact.toMap());
-
+    print("updateContact started");
     var dbClient = await database;
-    int id = await dbClient.update(TABLE_NAME, contact.toMap(),
-        where: 'id = ?', whereArgs: [contact.id]);
-    print("Strong id: " + id.toString());
+    await dbClient.update(TABLE_NAME, contact.toMap(), where: 'id = ?', whereArgs: [contact.id]);
+  }
+
+  deleteContact(globals.SavedContact contact) async {
+    print("deleteContact started");
+    var dbClient = await database;
+    await dbClient.delete(TABLE_NAME, where: "id = ?", whereArgs: [contact.id]);
   }
 }

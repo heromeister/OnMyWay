@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'onmyway_page.dart';
-import 'globals.dart' as globals;
+import 'package:cirrus_map_view/map_view.dart';
 
-void main() => runApp(App());
+void main() {
+  //MapView.setApiKey("AIzaSyBH_Eyeh42jgj69vfSCMArchMMrcGPYhhE");
+  runApp(App());
+}
 
 class App extends StatelessWidget {
   @override

@@ -1,13 +1,16 @@
-Check different map plugin. Try cirrus_map_view.
-^if it doesnt work check if updating the marker(function) will get it to give it's actual location after drag
+On Hold - 
+  Check reguraly for map plugin feature request: https://github.com/flutter/flutter/issues/25439
+  Update location for a contact already picked - done. currently doesnt work because map plugin. make a button in appbar?
 
-OnMyWay button - when it's clicked show a snackbar with undo
-OnMyWay functionality - location change listener 
-Update location for a contact already picked - done. currently doesnt work because map plugin. make a button in appbar?
-Delete location already picked (appbar button?)
-Add animation on open/close searh bar
-Splash screen? 
-Make icon
+Do In Order - 
+  Make contacts already exists in main screen not appear in add new screen
+  Permissions on app entrance (if one denys, exit app?)
+  Add animation on open/close searh bar
+  
+Requires Dedicated Time - 
+  OnMyWay functionality (Android Service) - location change listener + sms
 
----------------------------------------------------
-Groups
+At the end - 
+  Splash screen? 
+  Make icon
+  Go over all the namings in the app including the app name

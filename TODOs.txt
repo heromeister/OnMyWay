@@ -12,6 +12,13 @@ Do -
 Requires Dedicated Time - 
   OnMyWay functionality (Android Service) - location change listener + sms
 
+
+*****
+ - Delete + Edit on app bar in hamburger
+ - Delete in app bar and edit is on tile pressed
+ - FAB opens three options: add, edit, delete
+*****
+
 At the end - 
   Splash screen? 
   Make icon

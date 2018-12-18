@@ -3,6 +3,7 @@ import 'addnew_page.dart';
 import 'contacts_helper.dart';
 import 'location_picker.dart';
 import 'new_locationpicker.dart';
+import 'locationpicker_leaflet.dart';
 import 'globals.dart' as globals;
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -22,6 +23,8 @@ class OnMyWayPageState extends State<OnMyWayPage> {
   String _searchText = "";
   Widget _appBarTitle = Text("On My Way");
   Icon _searchIcon = Icon(Icons.search);
+  Icon _deleteIcon = Icon(Icons.delete);
+  bool _deleteClicked = false;
   Iterable<globals.SavedContact> _filteredSavedContacts;
 
   @override
@@ -53,7 +56,7 @@ class OnMyWayPageState extends State<OnMyWayPage> {
     });
   }
 
-  searchPressed() {
+  searchPress() {
     setState(() {
       if (this._searchIcon.icon == Icons.search) {
         this._searchIcon = new Icon(Icons.close);
@@ -71,20 +74,37 @@ class OnMyWayPageState extends State<OnMyWayPage> {
     });
   }
 
+  // TODO
+  deletePress() {
+    if(_deleteClicked) {
+      //call delete contacts
+    } else {
+      // show check boxes
+    }
+    _deleteClicked = !_deleteClicked;
+  }
+
+  backPress() {
+    _deleteClicked = false;
+  }
+
   getSavedContacts() async {
     var contacts = await _contactsHelper.getSavedContacts();
     setState(() {
       _contactsSaved = contacts;
       _filteredSavedContacts = contacts;
     });
+    print("Contacts list length: " + _contactsSaved.length.toString());
   }
 
   addContact() async {
     final data = await Navigator.push(
-        context, MaterialPageRoute(builder: (context) => AddNewPage()));
+        context, MaterialPageRoute(builder: (context) => AddNewPage(_contactsSaved)));
 
-    _contactsHelper.addContact(data);
-    await getSavedContacts();
+    if(data != null) {
+      _contactsHelper.addContact(data);
+      await getSavedContacts();
+    }
   }
 
   updateContact(globals.SavedContact contactToUpdate) async {
@@ -117,13 +137,22 @@ class OnMyWayPageState extends State<OnMyWayPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          title: _appBarTitle,
-          actions: <Widget>[
-            IconButton(
-              icon: _searchIcon,
-              onPressed: searchPressed,
-            )
-          ],
+        title: _appBarTitle,
+        actions: <Widget>[
+          IconButton(
+            icon: _searchIcon,
+            onPressed: searchPress,
+          ),
+          IconButton(
+            icon: _deleteIcon,
+            onPressed: deletePress,
+          )
+        ],
+        leading: (!_deleteClicked) ? null :
+        IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: backPress
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
@@ -131,69 +160,49 @@ class OnMyWayPageState extends State<OnMyWayPage> {
         onPressed: addContact,
       ),
       body: SafeArea(
-        child: _filteredSavedContacts != null
+        child: (_filteredSavedContacts != null && _filteredSavedContacts.length > 0)
             ? ListView.builder(
           itemCount: _filteredSavedContacts?.length ?? 0,
           itemBuilder: (BuildContext context, int index) {
             globals.SavedContact savedContact = _filteredSavedContacts?.elementAt(index);
             return Container(
-              child: Slidable(
-                delegate: SlidableDrawerDelegate(),
-                child: Row(
+              child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     Expanded(
-                      flex: 2,
-                      child: ListTile(
-                        leading: CircleAvatar(
-                          backgroundColor: Theme.of(context).primaryColor,
-                          child: Text(savedContact.name.length > 1
-                              ? savedContact.name?.substring(0, 2)
-                              : "")),
-                        title: Text(savedContact.name ?? ""),
-                      )
+                        flex: 2,
+                        child: ListTile(
+                          onTap: () => updateContact(savedContact),
+                          leading: CircleAvatar(
+                              backgroundColor: Theme.of(context).primaryColor,
+                              child: Text(savedContact.name.length > 1
+                                  ? savedContact.name?.substring(0, 2)
+                                  : "")),
+                          title: Text(savedContact.name ?? ""),
+                        )
                     ),
                     Flexible(
-                      child: Container(
-                        padding: EdgeInsets.only(right: 8.0),
-                        child: RaisedButton(
-                          onPressed: () {
-                            onMyWayButtonPressed(savedContact, context);
-                          },
-                          color: Colors.orange,
-                          child: Text("On My Way",
-                            style: TextStyle(color: Colors.white),
-                          ),
+                        child: Container(
+                            padding: EdgeInsets.only(right: 8.0),
+                            child: FlatButton(
+                                onPressed: () {
+                                  onMyWayButtonPressed(savedContact, context);
+                                },
+                                color: Colors.blue,
+                                child: Text("On My Way", style: TextStyle(color: Colors.white))
+                            )
                         )
-                      )
                     )
                   ]
-                ),
-                secondaryActions: <Widget>[
-                  new IconSlideAction(
-                    onTap: () {
-                      updateContact(savedContact);
-                    },
-                    icon: Icons.edit,
-                    caption: "Edit",
-                  ),
-                  new IconSlideAction(
-                    onTap: () {
-                      deleteContact(savedContact);
-                    },
-                    color: Colors.red,
-                    icon: Icons.delete,
-                    caption: "Delete",
-                  )
-                ],
               ),
               decoration: BoxDecoration(
-                border: Border(bottom: BorderSide(color: Colors.black26))),
+                  border: Border(bottom: BorderSide(color: Colors.black26))),
             );
           },
         )
-        : Center(child: Text("Click the button below to add new stuff")),
+            : Center(child: Text("Click the button below to add new stuff")),
       ),
     );
   }
+
 }

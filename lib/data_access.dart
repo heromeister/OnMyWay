@@ -8,7 +8,7 @@ const TABLE_NAME = "Contacts";
 class DataAccess {
   static Database _database;
   String _dirPath = "";
-  String _dbName = "contacts.db";
+  String _dbName = "saved_contacts.db";
 
   Future<Database> get database async {
     if (_database == null) {
@@ -29,13 +29,14 @@ class DataAccess {
         print(e);
       }
     }
+
     var retDb = await openConnection(path);
     return retDb;
   }
 
   openConnection(path) async {
     try {
-      var retDb = await openDatabase(path, version: 1, onCreate: _onCreate);
+      var retDb = await openDatabase(path, version: 2, onCreate: _onCreate);
       return retDb;
     } catch(e) {
       print(e);
@@ -45,6 +46,7 @@ class DataAccess {
   _onCreate(Database db, int version) async {
     await db.execute(
         'CREATE TABLE $TABLE_NAME (id INTEGER PRIMARY KEY AUTOINCREMENT, '
+                                  'identifier TEXT NOT NULL, '
                                   'displayName TEXT NOT NULL, '
                                   'phoneNumber TEXT NOT NULL, '
                                   'latitude REAL NOT NULL,'

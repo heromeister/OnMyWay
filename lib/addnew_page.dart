@@ -6,6 +6,9 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 
 class AddNewPage extends StatefulWidget {
+  final List<globals.SavedContact> contactsSaved;
+  AddNewPage(this.contactsSaved);
+
   AddNewPageState createState() => new AddNewPageState();
 }
 
@@ -64,17 +67,32 @@ class AddNewPageState extends State<AddNewPage> {
 
   refreshContacts() async {
     var contacts = await ContactsService.getContacts();
+    //contacts = filterOutSavedContacts(contacts);
     setState(() {
       _contacts = contacts;
       _filteredContacts = contacts;
     });
   }
+  
+  filterOutSavedContacts(contacts) {
+    contacts = contacts.where((contact) => widget.contactsSaved.where((saved) => saved.identifier != contact.identifier));
+    /*var retLst = contacts;
+    bool isFound;
+    for (var c in contacts) {
+      isFound = false;
+      for (var saved in widget.contactsSaved) {
+        isFound = (saved.identifier == c.identifier);
+      }
+      if (isFound) {
+        retLst.remove(c);
+      }
+    }*/
+  }
 
   contactSelected(Contact c) async {
-    globals.SavedContact retContact = new globals.SavedContact(c.displayName, c.phones.first.value);
+    globals.SavedContact retContact = new globals.SavedContact(c.displayName, c.phones.first.value, c.identifier);
     final locationPicked = await pickLocation();
 
-    //retContact.location(locationPicked);
     retContact.setLocation(locationPicked);
 
     Navigator.pop(context, retContact);

@@ -25,11 +25,13 @@ class ContactsHelper {
     List<globals.SavedContact> retContacts = new List();
     for (var contact in contacts) {
       globals.SavedContact savedContact =
-      globals.SavedContact(contact["displayName"],
+      globals.SavedContact(
+          contact["displayName"],
           contact["phoneNumber"],
-          contact["id"],
+          contact["identifier"],
           contact["latitude"],
-          contact["longitude"]);
+          contact["longitude"],
+          contact["id"]);
 
       print(contact);
       print(savedContact.toString());

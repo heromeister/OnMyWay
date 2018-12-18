@@ -28,7 +28,8 @@ class LocationPickerPageState extends State<LocationPickerPage> {
           IconButton(
             icon: Icon(Icons.save),
             onPressed: () {
-              print("Location picked " + _selectedMarker.options.position.toString());
+              print("Location picked " +
+                  _selectedMarker.options.position.toString());
               Navigator.pop(context, _selectedMarker.options.position);
             },
           )
@@ -83,7 +84,8 @@ class LocationPickerState extends State<LocationPicker> {
 
   pullPopupShouldDismiss() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    bool isFirstTimePickingLocation = (prefs.getBool("isFirstTimePickingLocation") ?? true);
+    bool isFirstTimePickingLocation =
+        (prefs.getBool("isFirstTimePickingLocation") ?? true);
     await prefs.setBool("isFirstTimePickingLocation", false);
     _isFirstTimePickingLocation = isFirstTimePickingLocation;
   }
@@ -91,18 +93,56 @@ class LocationPickerState extends State<LocationPicker> {
   @override
   Widget build(BuildContext context) {
     //if (_isFirstTimePickingLocation) showAlertDialog(context: context);
-    return GoogleMap(
-      onMapCreated: _onMapCreated,
-      options: GoogleMapOptions(
-          cameraPosition: CameraPosition(
-            target: (widget.locationToDisplay != null)
-                ? widget.locationToDisplay
-                : LatLng(_userLocation["latitude"], _userLocation["longitude"]),
-            zoom: 15.0,
-          ),
-          mapType: MapType.normal,
-          myLocationEnabled: true,
-          compassEnabled: true),
+    return Column(
+      children: <Widget>[
+        Expanded(
+          flex: 4,
+          child: GoogleMap(
+            onMapCreated: _onMapCreated,
+            options: GoogleMapOptions(
+              cameraPosition: CameraPosition(
+              target: (widget.locationToDisplay != null)
+                  ? widget.locationToDisplay
+                  : LatLng(_userLocation["latitude"], _userLocation["longitude"]),
+              zoom: 15.0,
+            ),
+            mapType: MapType.normal,
+            myLocationEnabled: true,
+            compassEnabled: true),
+          )
+        ),
+        Flexible(
+          child: Center(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Expanded(
+                  flex: 3,
+                  child: TextField(
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 28,
+                      color: Colors.black,
+                      decoration: TextDecoration.underline
+                    ),
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                      hintText: "Or enter an address"
+                    ),
+                  )
+                ),
+                Flexible(
+                  child: Container(
+                    padding: EdgeInsets.only(left: 2.0),
+                    width: 10,
+                    child: Icon(Icons.edit)
+                  )
+                )
+              ]
+            )
+          )
+        )
+      ]
     );
   }
 
@@ -114,7 +154,8 @@ class LocationPickerState extends State<LocationPicker> {
     print("Widget's passed locaiotn: ");
     print(widget.locationToDisplay);
     if (widget.locationToDisplay != null) {
-      _addMarker(LatLng(widget.locationToDisplay.latitude, widget.locationToDisplay.longitude));
+      _addMarker(LatLng(widget.locationToDisplay.latitude,
+          widget.locationToDisplay.longitude));
     } else {
       _addMarker(LatLng(_userLocation["latitude"], _userLocation["longitude"]));
     }
@@ -155,21 +196,20 @@ class LocationPickerState extends State<LocationPicker> {
     controller.updateMarker(_selectedMarker, changes);
   }
 
-  void showAlertDialog<T>({ BuildContext context }) {
+  void showAlertDialog<T>({BuildContext context}) {
     showDialog<T>(
-      context: context,
-      builder: (BuildContext context) =>
-        AlertDialog(
-          title: Text("Location Picker"),
-          content: Text("In order to pick a location, long press the marker and drag it around"),
-          actions: <Widget>[
-            FlatButton(
-              child: Text("Got It!"),
-              textColor: Theme.of(context).primaryColor,
-              onPressed: () {},
-            )
-          ],
-        )
-    );
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+              title: Text("Location Picker"),
+              content: Text(
+                  "In order to pick a location, long press the marker and drag it around"),
+              actions: <Widget>[
+                FlatButton(
+                  child: Text("Got It!"),
+                  textColor: Theme.of(context).primaryColor,
+                  onPressed: () {},
+                )
+              ],
+            ));
   }
 }

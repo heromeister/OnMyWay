@@ -54,4 +54,8 @@ class ContactsHelper {
   deleteContact(globals.SavedContact contactToDelete) async {
     await _dataAccess.deleteContact(contactToDelete);
   }
+
+  deleteContacts(List contactIdsToDelete) async {
+    await _dataAccess.deleteContacts(contactIdsToDelete);
+  }
 }

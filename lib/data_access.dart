@@ -89,4 +89,12 @@ class DataAccess {
     var dbClient = await database;
     await dbClient.delete(TABLE_NAME, where: "id = ?", whereArgs: [contact.id]);
   }
+
+  deleteContacts(List contactIdsToDelete) async {
+    print("deleteContacts started");
+    var dbClient = await database;
+    for(int contactIdToDelete in contactIdsToDelete) {
+      await dbClient.delete(TABLE_NAME, where: "id = ?", whereArgs: [contactIdToDelete]);
+    }
+  }
 }

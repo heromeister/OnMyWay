@@ -67,7 +67,7 @@ class AddNewPageState extends State<AddNewPage> {
 
   refreshContacts() async {
     var contacts = await ContactsService.getContacts();
-    //contacts = filterOutSavedContacts(contacts);
+    contacts = filterOutSavedContacts(contacts);
     setState(() {
       _contacts = contacts;
       _filteredContacts = contacts;
@@ -75,18 +75,7 @@ class AddNewPageState extends State<AddNewPage> {
   }
   
   filterOutSavedContacts(contacts) {
-    contacts = contacts.where((contact) => widget.contactsSaved.where((saved) => saved.identifier != contact.identifier));
-    /*var retLst = contacts;
-    bool isFound;
-    for (var c in contacts) {
-      isFound = false;
-      for (var saved in widget.contactsSaved) {
-        isFound = (saved.identifier == c.identifier);
-      }
-      if (isFound) {
-        retLst.remove(c);
-      }
-    }*/
+    return contacts.where((contact) => widget.contactsSaved.where((saved) => saved.identifier == contact.identifier).length == 0);
   }
 
   contactSelected(Contact c) async {
@@ -108,6 +97,7 @@ class AddNewPageState extends State<AddNewPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[200],
       appBar: AppBar(
         title: _appBarTitle,
         actions: <Widget>[

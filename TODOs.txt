@@ -1,12 +1,11 @@
 On Hold - 
   Check reguraly for map plugin feature request: https://github.com/flutter/flutter/issues/25439
-  Update location for a contact already picked - done. currently doesnt work because map plugin. make a button in appbar?
+  Update location for a contact already picked - done. currently doesnt work because map plugin. 
 
 Do - 
   Rethink coloring, delete/edit location, map page
-  Add street search ability in map page
-  Make contacts already exists in main screen not appear in add new screen
-  Permissions on app entrance (if one denys, exit app?)
+  Add street search ability in map page - done. Add functionality
+  Permissions on app entrance (if one denys, exit app?) - ask koreb
   Add animation on open/close searh bar + focus search bar at icon click
   
 Requires Dedicated Time - 

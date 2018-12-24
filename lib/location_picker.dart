@@ -120,6 +120,7 @@ class LocationPickerState extends State<LocationPicker> {
                 Expanded(
                   flex: 3,
                   child: TextField(
+                    autofocus: true,
                     controller: _addressSearchController,
                     textAlign: TextAlign.center,
                     style: TextStyle(

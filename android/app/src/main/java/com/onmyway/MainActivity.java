@@ -27,7 +27,7 @@ public class MainActivity extends FlutterActivity {
             MainActivity.this.result = result;
             Object location = methodCall.arguments;
             if(methodCall.method.equals(METHOD_SWITCH_VIEW)) {
-              onLaunchMapScreen(location);
+              onLaunchFullScreen(location);
             }
           }
         }
@@ -35,8 +35,8 @@ public class MainActivity extends FlutterActivity {
   }
 
   private void onLaunchFullScreen(Object location) {
-    Intent fullScreenIntent = new Intent(this, CountActivity.class);
+    /*Intent fullScreenIntent = new Intent(this, CountActivity.class);
     fullScreenIntent.putExtra(CountActivity.EXTRA_COUNTER, count);
-    startActivityForResult(fullScreenIntent, COUNT_REQUEST);
+    startActivityForResult(fullScreenIntent, COUNT_REQUEST);*/
   }
 }

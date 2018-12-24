@@ -36,7 +36,7 @@ class DataAccess {
 
   openConnection(path) async {
     try {
-      var retDb = await openDatabase(path, version: 2, onCreate: _onCreate);
+      var retDb = await openDatabase(path, version: 4, onCreate: _onCreate);
       return retDb;
     } catch(e) {
       print(e);
@@ -50,7 +50,8 @@ class DataAccess {
                                   'displayName TEXT NOT NULL, '
                                   'phoneNumber TEXT NOT NULL, '
                                   'latitude REAL NOT NULL,'
-                                  'longitude REAL  NOT NULL)');
+                                  'longitude REAL  NOT NULL,'
+                                  'address TEXT)');
     print("$TABLE_NAME table created");
   }
 

@@ -4,7 +4,7 @@ import 'location_picker.dart';
 import 'new_locationpicker.dart';
 import 'globals.dart' as globals;
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+//import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 
 class ContactsHelper {
@@ -29,6 +29,7 @@ class ContactsHelper {
           contact["displayName"],
           contact["phoneNumber"],
           contact["identifier"],
+          contact["address"],
           contact["latitude"],
           contact["longitude"],
           contact["id"]);

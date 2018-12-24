@@ -1,8 +1,9 @@
-import 'location_picker.dart';
+//import 'location_picker.dart';
+import 'placepicker.dart';
 import 'globals.dart' as globals;
 import 'package:flutter/material.dart';
 import 'package:contacts_service/contacts_service.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+//import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 
 class AddNewPage extends StatefulWidget {
@@ -49,16 +50,21 @@ class AddNewPageState extends State<AddNewPage> {
 
   searchPressed() {
     setState(() {
-      if (this._searchIcon.icon == Icons.search) {
-        this._searchIcon = new Icon(Icons.close);
-        this._appBarTitle = new TextField(
-          controller: _filter,
-          decoration: new InputDecoration(
-              prefixIcon: new Icon(Icons.search), hintText: 'Search...'),
+      if (_searchIcon.icon == Icons.search) {
+        _searchIcon = Icon(Icons.close);
+        _appBarTitle = TextField(
+            autofocus: true,
+            controller: _filter,
+            style: TextStyle(color: Colors.white, fontSize: 16),
+            decoration: InputDecoration(
+                prefixIcon: Icon(Icons.search, color: Colors.white,),
+                hintText: 'Search...',
+                hintStyle: TextStyle(color: Colors.white, fontSize: 16)
+            )
         );
       } else {
-        this._searchIcon = new Icon(Icons.search);
-        this._appBarTitle = Text("Add Location to Contact");
+        _searchIcon = Icon(Icons.search);
+        _appBarTitle = Text("Add Location to Contact");
         _filteredContacts = _contacts;
         _filter.clear();
       }
@@ -80,18 +86,24 @@ class AddNewPageState extends State<AddNewPage> {
 
   contactSelected(Contact c) async {
     globals.SavedContact retContact = new globals.SavedContact(c.displayName, c.phones.first.value, c.identifier);
-    final locationPicked = await pickLocation();
 
-    retContact.setLocation(locationPicked);
+    /*final locationPicked = await pickLocation();
+    retContact.setLocation(locationPicked);*/
 
+    var pickedLocationJson = await pickLocation();
+    retContact.setLocation(pickedLocationJson["location"]);
+    retContact.setAddress(pickedLocationJson["address"]);
     Navigator.pop(context, retContact);
   }
 
   pickLocation() async {
-    final locationPicked = await Navigator.of(context).push(MaterialPageRoute(
+    /*final locationPicked = await Navigator.of(context).push(MaterialPageRoute(
+        builder: (BuildContext context) => LocationPickerPage()));
+    return locationPicked;*/
+    final addressPicked = await Navigator.of(context).push(MaterialPageRoute(
         builder: (BuildContext context) => LocationPickerPage()));
 
-    return locationPicked;
+    return addressPicked;
   }
 
   @override

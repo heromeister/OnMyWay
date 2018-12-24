@@ -1,12 +1,11 @@
-import 'addnew_page.dart';
+/*import 'addnew_page.dart';
 import 'contacts_helper.dart';
-//import 'location_picker.dart';
+import 'location_picker.dart';
 import 'globals.dart' as globals;
 import 'package:flutter/material.dart';
 import 'package:easy_alert/easy_alert.dart';
 
-//import 'new_locationpicker.dart';
-import 'placepicker.dart';
+import 'new_locationpicker.dart';
 //import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class OnMyWayPage extends StatefulWidget {
@@ -36,7 +35,6 @@ class OnMyWayPageState extends State<OnMyWayPage> {
     _contactsSaved = new List();
     _whichContactsToDelete = new Map();
     _contactsHelper = new ContactsHelper();
-    if (globals.ContactsListOnMyWay == null) globals.ContactsListOnMyWay = new List();
     getSavedContacts();
     initContactsDeletionMap();
   }
@@ -85,14 +83,14 @@ class OnMyWayPageState extends State<OnMyWayPage> {
 
   enterSearchMode() {
     _searchIcon = Icon(Icons.close);
-    _appBarTitle = TextField(
+    _appBarTitle = = TextField(
         autofocus: true,
         controller: _filter,
         style: TextStyle(color: Colors.white, fontSize: 16),
         decoration: InputDecoration(
-          prefixIcon: Icon(Icons.search, color: Colors.white,),
-          hintText: 'Search...',
-          hintStyle: TextStyle(color: Colors.white, fontSize: 16)
+            prefixIcon: Icon(Icons.search, color: Colors.white,),
+            hintText: 'Search...',
+            hintStyle: TextStyle(color: Colors.white, fontSize: 16)
         )
     );
   }
@@ -104,23 +102,30 @@ class OnMyWayPageState extends State<OnMyWayPage> {
     _filter.clear();
   }
 
+  // TODO
   deletePress() {
     if(_deleteClicked && extractPickedContactsToDelete().length > 0) {
-     Alert.confirm(context, title: "Are you sure you want to delete these?").then((int ret) {
-       if (ret == Alert.OK) {
-         Map pickedContacts = extractPickedContactsToDelete();
-         deleteContacts(pickedContacts.keys.toList());
-         setState(() {
-           _deleteClicked = !_deleteClicked;
-         });
-       }
-     });
+      Alert.confirm(context, title: "Are you sure you want to delete these?").then((int ret) {
+        if (ret == Alert.OK) {
+          Map pickedContacts = extractPickedContactsToDelete();
+          deleteContacts(pickedContacts.keys.toList());
+          setState(() {
+            _deleteClicked = !_deleteClicked;
+          });
+        }
+      });
     } else if (_contactsSaved.length > 0){
       initContactsDeletionMap();
       setState(() {
         _deleteClicked = !_deleteClicked;
       });
     }
+
+    /*if (_contactsSaved.length > 0) {
+      setState(() {
+        _deleteClicked = !_deleteClicked;
+      });
+    }*/
   }
 
   extractPickedContactsToDelete() {
@@ -154,19 +159,12 @@ class OnMyWayPageState extends State<OnMyWayPage> {
     _deleteClicked = false;
   }
 
-  //TODO
   updateContact(globals.SavedContact contactToUpdate) async {
     exitSearchMode();
-    /*final locationPicked = await Navigator.of(context).push(MaterialPageRoute(
-        builder: (BuildContext context) => NewLocationPickerPage(location: contactToUpdate.location)));
+    final locationPicked = await Navigator.of(context).push(MaterialPageRoute(
+        builder: (BuildContext context) => LocationPickerPage(location: contactToUpdate.location)));
 
-    contactToUpdate.location(locationPicked);*/
-
-    final pickedLocationJson = await Navigator.of(context).push(MaterialPageRoute(
-        builder: (BuildContext context) => LocationPickerPage(contact: contactToUpdate)));
-
-    contactToUpdate.setLocation(pickedLocationJson["location"]);
-    contactToUpdate.setAddress(pickedLocationJson["address"]);
+    contactToUpdate.location(locationPicked);
     await _contactsHelper.updateContact(contactToUpdate);
     await getSavedContacts();
   }
@@ -182,35 +180,15 @@ class OnMyWayPageState extends State<OnMyWayPage> {
   }
 
   onMyWayButtonPressed(globals.SavedContact contactClicked, BuildContext context) {
-    setState(() {
-      if (isContactOnMyWay(contactClicked)) {
-        showCanceledSnackBar(contactClicked, context);
-        globals.ContactsListOnMyWay.remove(contactClicked);
-      } else {
-        showUndoSnackBar(contactClicked, context);
-        globals.ContactsListOnMyWay.add(contactClicked);
-      }
-    });
+    showUndoSnackBar(contactClicked, context);
   }
 
   showUndoSnackBar(globals.SavedContact contactClicked, BuildContext context) {
     SnackBar snackBar = SnackBar(
-        content: Text("You're on your way to " + contactClicked.name),
-        action: SnackBarAction(label: "Undo", onPressed: () => onMyWayButtonPressed(contactClicked, context))
+        content: Text("You're on Your way to " + contactClicked.name),
+        action: SnackBarAction(label: "Undo", onPressed: () {})
     );
     Scaffold.of(context).showSnackBar(snackBar);
-  }
-
-  showCanceledSnackBar(globals.SavedContact contactClicked, BuildContext context) {
-    SnackBar snackBar = SnackBar(
-        content: Text("You're no logner on your way to " + contactClicked.name),
-        action: SnackBarAction(label: "Undo", onPressed: () => onMyWayButtonPressed(contactClicked, context))
-    );
-    Scaffold.of(context).showSnackBar(snackBar);
-  }
-
-  isContactOnMyWay(globals.SavedContact contact) {
-    return globals.ContactsListOnMyWay.indexOf(contact) > -1;
   }
 
   @override
@@ -221,8 +199,8 @@ class OnMyWayPageState extends State<OnMyWayPage> {
         title: _appBarTitle,
         actions: <Widget>[
           IconButton(
-            icon: _searchIcon,
-            onPressed: searchPress
+              icon: _searchIcon,
+              onPressed: searchPress
           ),
           IconButton(
             color: (_deleteClicked) ? Colors.red : Colors.white,
@@ -245,65 +223,45 @@ class OnMyWayPageState extends State<OnMyWayPage> {
         child: (_filteredSavedContacts != null && _filteredSavedContacts.length > 0)
             ? showMainListView()
             : (_searchIcon.icon == Icons.search) ? Center(child: Text("Click the button below to add new stuff"))
-                                                 : Text(""),
+            : Text(""),
       ),
     );
   }
 
   Widget showMainListView() {
-    return ListView.builder(
-      itemCount: _filteredSavedContacts?.length ?? 0,
-      itemBuilder: (BuildContext context, int index) {
-        globals.SavedContact savedContact = _filteredSavedContacts?.elementAt(index);
-        bool contactOnMyWay = isContactOnMyWay(savedContact);
-        return Container(
-          child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Expanded(
-                    flex: 2,
-                    child: ListTile(
-                      onTap: () => (!_deleteClicked) ? updateContact(savedContact) : {},
-                      leading: CircleAvatar(
-                          backgroundColor: Theme.of(context).primaryColor,
-                          child: Text(savedContact.name.length > 1
-                              ? savedContact.name?.substring(0, 2)
-                              : "")),
-                      title: Text(savedContact.name ?? ""),
-                    )
-                ),
-                Flexible(
-                    child: Container(
-                        padding: EdgeInsets.only(right: 8.0),
-                        child: _deleteClicked
-                            ? Checkbox(
-                              value: _whichContactsToDelete[savedContact.id],
-                              onChanged: (boolChangedValue) {
-                                setState(() {
-                                  _whichContactsToDelete[savedContact.id] = boolChangedValue;
-                                });
-                              }
-                            )
-                            : FlatButton(
-                            onPressed: () {
-                              onMyWayButtonPressed(savedContact, context);
-                            },
-                            color: (!contactOnMyWay) ? Colors.blue : Colors.red,
-                            child: (!contactOnMyWay) 
-                                     ? Text("On My Way", style: TextStyle(color: Colors.white))
-                                     : Padding(
-                                        padding: EdgeInsets.only(left:23.5,right:23.5),
-                                        child: Icon(Icons.close, color: Colors.white)
-                                     )
-                        )
-                    )
-                )
-              ]
-          ),
-          decoration: BoxDecoration(
-              border: Border(bottom: BorderSide(color: Colors.black26))),
-        );
-      },
-    );
+    globals.SavedContact savedContact = _filteredSavedContacts?.elementAt(0);
+    return Container(
+      width: MediaQuery.of(context).size.width / 2 - 5,
+      padding: EdgeInsets.all(2.0),
+      child: Card (
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15.0),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Expanded(
+                flex: 1,
+                child: CircleAvatar(
+                    backgroundColor: Theme.of(context).primaryColor,
+                    child: Text(savedContact.name.length > 1
+                        ? savedContact.name?.substring(0, 2)
+                        : "")),
+              ),Expanded(flex:2,child:Text("")),
+              Flexible(
+                child:
+                  IconButton(
+                    icon: Icon(Icons.more_vert),
+                  )
+              )
+            ],
+          )
+        ],
+      ),
+    ));
   }
 }
+*/

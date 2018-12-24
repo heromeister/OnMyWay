@@ -1,7 +1,7 @@
 import 'package:latlong/latlong.dart';
 import 'package:flutter/material.dart';
 import 'package:location/location.dart' as LocationPackage;
-import 'package:cirrus_map_view/map_view.dart';
+import 'package:map_view/map_view.dart';
 
 class NewLocationPickerPage extends StatelessWidget {
   final location;
@@ -57,6 +57,7 @@ class NewLocationPickerState extends State<NewLocationPicker> {
   initState() {
     super.initState();
 
+    MapView mapView = new MapView();
     getCurrentLocation();
     Map<String, double> fromMap = _userLocation;
     if (widget.locationToDisplay != null) {
@@ -76,6 +77,10 @@ class NewLocationPickerState extends State<NewLocationPicker> {
       mapView.setMarkers(<Marker>[
           new Marker("1", "Picked Place", location.latitude, location.longitude),
       ]);
+    });
+
+    mapView.onCameraChanged.listen((cameraPosition) {
+        this.setState(() => this.cameraPosition = cameraPosition);
     });
   }
 
@@ -115,7 +120,6 @@ class NewLocationPickerState extends State<NewLocationPicker> {
             mapViewType: MapViewType.normal,
             showUserLocation: true,
             showMyLocationButton: true,
-            showCompassButton: true,
             initialCameraPosition: cameraPosition,
             hideToolbar: true));
 
